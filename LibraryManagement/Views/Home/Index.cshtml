@@ -1,0 +1,52 @@
+﻿@model User;
+<div class="text-center">
+
+    <h2>Login Page</h2>
+    <form action="~/Home/Login" method="post">
+    <div>
+        <label>Name:</label>
+        <input type="text" name="Name"  />
+    </div>
+    <br/>
+    <div>
+        <label>Select Role:</label>
+        <select name="UserType">
+            <option value="Librarian">Librarian</option>
+            <option value="Member">Member</option>
+        </select>
+    </div>
+        <br />
+    <div>
+        <label>Password:</label>
+        <input type="password" name="Password"  />
+    </div>
+    <button type="submit" >Login </button>
+    </form>
+    <form action="~/Home/Register" method="post">
+        <div>
+            <label>Name:</label>
+            <input type="text" name="Name" />
+        </div>
+        <br />
+        <div>
+            <label>Email:</label>
+            <input type="text" name="Email" />
+        </div>
+        <br />
+        <div>
+            <label>Select Role:</label>
+            <select name="UserType">
+                <option value="Librarian">Librarian</option>
+                <option value="Member">Member</option>
+            </select>
+        </div>
+        <br />
+        <div>
+            <label>Password:</label>
+            <input type="password" name="Password" />
+        </div>
+        <button type="submit">Register </button>
+    </form>
+   
+   
+</div>

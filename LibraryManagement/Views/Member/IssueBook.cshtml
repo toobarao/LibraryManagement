@@ -1,0 +1,45 @@
+﻿@model Book;
+
+<h1>Issue Book</h1>
+
+@{
+    if (ViewBag.AvailabilityMsg!=null)
+    {
+        <p>ViewBag.AvailabilityMsg</p>
+    }
+    if (ViewBag.BorrowLimitMsg!=null)
+    {
+        <p>ViewBag.BorrowLimitMsg</p>
+    }
+    if (ViewBag.UnreturnBooksMsg != null)
+    {
+        <p>ViewBag.UnreturnBooksMsg</p>
+    }
+    if (ViewBag.UnPaidFineMsg != null)
+    {
+        <p>ViewBag.UnPaidFineMsg</p>
+    }
+   
+}
+
+<form method="post" action="~/Member/IssueBook">
+    <input type="text" hidden  name ="Id" value="@Model.Id"/>
+<div>
+    <label>Book Title:</label>
+    <input type="text" readonly value="@Model.Title" />
+</div>
+<div>
+    <label>Book Author:</label>
+    <input type="text" readonly value="@Model.Author" />
+</div>
+
+<div>
+    <label>Return Date:</label>
+        <input type="date" name="returnDate" />
+</div>
+    @if (ViewBag.CanIssue == true)
+    {
+        <button type="submit">Issue Book</button>
+    }
+
+</form>

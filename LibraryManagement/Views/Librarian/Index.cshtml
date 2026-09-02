@@ -1,0 +1,49 @@
+﻿@model List<Book>;
+<h1>List Of Books</h1>
+    <table>
+        <thead>
+            <tr>
+            <th>
+                Id
+            </th>
+            <th>Title</th>
+            <th>Author </th>
+            <th>Availability</th>
+            <th>Action</th>
+            </tr>
+            
+        </thead>
+   <tbody>
+        @foreach(var book in Model)
+        {
+            <tr>
+                <td>@book.Id</td>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Availability</td>
+                <td>@Html.ActionLink("Remove", "RemoveBook","Librarian",book.Id)</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="flex">
+    <h2>Add a book</h2>
+    <form action="~/Librarian/AddBook" method="post">
+        <div>
+            <label>Title</label>
+            <input type="text" name="Title" />
+        </div>
+        <div>
+            <label>Author</label>
+            <input type="text" name="Author" />
+        </div>
+        <buton typeof=" submit">Add Book</buton>
+
+
+    </form>
+
+  
+   
+
+</div>

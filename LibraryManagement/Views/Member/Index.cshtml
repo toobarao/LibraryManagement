@@ -1,0 +1,38 @@
+﻿@model List<Book>;
+<h1>List Of Books</h1>
+<table>
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>Title</th>
+            <th>Author </th>
+            <th>Availability</th>
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Id</td>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Availability</td>
+                <td>
+                    @Html.ActionLink("Issue Book","IssueBook","Member",new{Id=book.Id})
+                 
+                    </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    if (@ViewBag.Msg != null) { 
+    alert(@ViewBag.Msg)
+    }
+</script>
