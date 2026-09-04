@@ -14,7 +14,13 @@ namespace LibraryManagement
         public DbSet<Borrowing> Borrowing{ get; set; }
         public DbSet<Member> Memebers { get; set; }
         public DbSet<Librarian> Librarian { get; set; }
-
         public DbSet<ReturnBook> ReturnBooks { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<StudentMember>();
+            modelBuilder.Entity<PremiumMember>();
+        }
     }
 }

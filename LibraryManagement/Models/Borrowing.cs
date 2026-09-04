@@ -1,4 +1,6 @@
-﻿namespace LibraryManagement.Models
+﻿using LibraryManagement.Migrations;
+
+namespace LibraryManagement.Models
 {
     public class Borrowing
     {
@@ -10,8 +12,7 @@
 
         public DateTime BorrowDate { get; set; }
 
-        public int MaxBorrowLimit = 3;
-
+        public BorrowingStatus Status { get; set; }
         public Borrowing() { }
 
         public  Borrowing(Book book,Member member,DateTime returnDate)
@@ -30,17 +31,18 @@
                 book.Availability = "Yes";
 
         }
-        public bool BorrowingLimitStatus(List<Borrowing> borrowList)
+        public bool BorrowingLimitStatus(List<Borrowing> borrowList,Member member)
         {
             var booksBorrowed = borrowList.Count();
             
-            if (booksBorrowed < MaxBorrowLimit)
+            if (booksBorrowed < member.borrowLimit())
                 return true;
             return false;
 
         }
-        public decimal GetFineStatus(List<Borrowing> borrowList,List<ReturnBook> returnList)
+        public decimal GetFineStatus(List<Borrowing> borrowList,List<ReturnBook> returnList,Member member)
         {
+            int fineValue = member.FineValue();
             decimal fine = 0;
             if (borrowList.Count() == 0 && returnList.Count() == 0)
                 return fine;
@@ -50,19 +52,31 @@
                 {
                     var borrowId=borrowItem.Id;
                     var expectedReturnDate=borrowItem.ExpectedReturnDate;
-                    var bookReturn = returnList.Where(x => x.Borrowing.Id == borrowId).First();
-                    if (bookReturn!=null)
+                    int lateDays= (DateTime.Now - expectedReturnDate).Days;
+                    if (lateDays>0 && returnList.Count()>0)
                     {
-                        int days = (bookReturn.ReturnDate - expectedReturnDate).Days;
-                        if (days>0)
+                        var bookReturn = returnList.Where(x => x.Borrowing.Id == borrowId).First();
+                        if (bookReturn != null)
                         {
-                            fine += days * 20;
+                            int days = (bookReturn.ReturnDate - expectedReturnDate).Days;
+                            if (days > 0)
+                            {
+                                fine += days * fineValue;
+                            }
                         }
+                        else
+                            return -1;
+                    }
+                    else if(lateDays <= 0 && returnList.Count() == 0)
+                    {
+                        return 0;
                     }
                     else
                         return -1;
 
-                    
+
+
+
                 }
               
 
@@ -73,9 +87,34 @@
 
         }
 
-        public decimal CalculateFine(DateTime returnDate)
+        public decimal CalculateFine(DateTime returnDate, Member member)
         {
-            return 67;
+            int fineValue = member.FineValue();
+            int days=(returnDate-this.ExpectedReturnDate).Days;
+            if(days>0)
+            {
+                return days*fineValue;
+            }
+            return 0;
         }
+
+        public void updateBorrowStatus(DateTime returnDate)
+        {
+            int days = (returnDate - this.ExpectedReturnDate).Days;
+            if (days>0)
+                this.Status = BorrowingStatus.ReturnedLate;
+            else
+                this.Status= BorrowingStatus.ReturnedOnTime;
+
+
+        }
+    }
+
+    public enum BorrowingStatus
+    {
+        Borrowed,
+        ReturnedOnTime,
+        ReturnedLate,
+        Overdue
     }
 }

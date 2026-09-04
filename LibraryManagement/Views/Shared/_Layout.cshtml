@@ -22,7 +22,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                      
+                        @if (Context.Session.GetString("Role") != null && Context.Session.GetString("Role")=="Member")
+                        {
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Member" asp-action="BorrowBooks">Borrow Books</a>
+                            </li>
+                        
+                        }
+
                        
                         @if (Context.Session.GetString("Username")!=null)
                         {

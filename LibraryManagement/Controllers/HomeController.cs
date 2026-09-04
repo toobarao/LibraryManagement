@@ -27,6 +27,7 @@ namespace LibraryManagement.Controllers
             {
               var librarian=  _dbcontext.Librarian.Where(x => x.Name == user.Name && x.Password == user.Password);
                HttpContext.Session.SetString("Username", user.Name);
+               HttpContext.Session.SetString("Role",user.UserType);
                 if (librarian.Count()!=0)
                     return RedirectToAction("Index","Librarian");
             }
@@ -34,6 +35,7 @@ namespace LibraryManagement.Controllers
             {
                 var member = _dbcontext.Memebers.Where(x => x.Name == user.Name && x.Password == user.Password);
                 HttpContext.Session.SetString("Username", user.Name);
+                HttpContext.Session.SetString("Role", user.UserType);
                 if (member.Count()!=0)
                     return RedirectToAction("Index", "Member");
 
@@ -57,8 +59,16 @@ namespace LibraryManagement.Controllers
             }
             else
             {
-                _dbcontext.Memebers.Add(new Member( user.Name, user.Password,user.Email));
-                _dbcontext.SaveChanges();
+                if (user.UserType == "PremiumMember")
+                {
+                    _dbcontext.Memebers.Add(new PremiumMember(user.Name, user.Password, user.Email));
+                    _dbcontext.SaveChanges();
+                }
+                else
+                {
+                    _dbcontext.Memebers.Add(new StudentMember(user.Name, user.Password, user.Email));
+                    _dbcontext.SaveChanges();
+                }
 
 
             }

@@ -3,6 +3,7 @@ using System;
 using LibraryManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903093224_borrowstatus")]
+    partial class borrowstatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,10 +111,6 @@ namespace LibraryManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -134,32 +132,6 @@ namespace LibraryManagement.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Memebers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Member");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.Reservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ResevationDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("bookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("memberId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("bookId");
-
-                    b.HasIndex("memberId");
-
-                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.ReturnBook", b =>
@@ -187,20 +159,6 @@ namespace LibraryManagement.Migrations
                     b.ToTable("ReturnBooks");
                 });
 
-            modelBuilder.Entity("LibraryManagement.Models.PremiumMember", b =>
-                {
-                    b.HasBaseType("LibraryManagement.Models.Member");
-
-                    b.HasDiscriminator().HasValue("PremiumMember");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.StudentMember", b =>
-                {
-                    b.HasBaseType("LibraryManagement.Models.Member");
-
-                    b.HasDiscriminator().HasValue("StudentMember");
-                });
-
             modelBuilder.Entity("LibraryManagement.Models.Borrowing", b =>
                 {
                     b.HasOne("LibraryManagement.Models.Book", "Book")
@@ -218,25 +176,6 @@ namespace LibraryManagement.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Member");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.Reservation", b =>
-                {
-                    b.HasOne("LibraryManagement.Models.Book", "book")
-                        .WithMany()
-                        .HasForeignKey("bookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LibraryManagement.Models.Member", "member")
-                        .WithMany()
-                        .HasForeignKey("memberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("book");
-
-                    b.Navigation("member");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.ReturnBook", b =>

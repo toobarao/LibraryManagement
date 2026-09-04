@@ -1,6 +1,7 @@
 ﻿using LibraryManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace LibraryManagement.Controllers
 {
@@ -16,6 +17,7 @@ namespace LibraryManagement.Controllers
         {
 
             var books = _dbcontext.Books.ToList();
+
             return View(books);
         }
         public IActionResult IssueBook(int Id)
@@ -43,47 +45,84 @@ namespace LibraryManagement.Controllers
             return RedirectToAction("Index");
 
         }
-
-        public void checkMemeberBorrowStatus(int Id)
+        public IActionResult BorrowBooks()
         {
-            Book book = _dbcontext.Books.Find(Id);
             var username = HttpContext.Session.GetString("Username");
             Member member = _dbcontext.Memebers.Where(x => x.Name == username).First();
-            if (book != null && member != null)
-            {
-                Borrowing borrow = new Borrowing();
-
-                var memberBorrowList = _dbcontext.Borrowing.Where(x => x.Member.Id == member.Id).ToList();
-                var memberReturnList = _dbcontext.ReturnBooks.Where(x => x.MemberId == member.Id).ToList();
-                bool bookAvailabityStatus = book.getBookAvailability();
-                ViewBag.CanIssue = true;
-
-                if (!bookAvailabityStatus)
-                {
-                    ViewBag.Msg = "Sorry Book is not available at the moment...";
-                    ViewBag.CanIssue = false;
-                }
-                bool maxLimitStatus = borrow.BorrowingLimitStatus(memberBorrowList);
-                if (!maxLimitStatus)
-                {
-                    ViewBag.Msg = "You have reached to your borrow limits";
-                    ViewBag.CanIssue = false;
-                }
-                decimal fineStatus = borrow.GetFineStatus(memberBorrowList, memberReturnList);
-                if (fineStatus == -1)
-                {
-                    ViewBag.Msg = "You havent return your borrowed book";
-                    ViewBag.CanIssue = false;
-                }
-                if (fineStatus > 0)
-                {
-                    ViewBag.Msg = $"You have fine of  {fineStatus} rupees.";
-                    ViewBag.CanIssue = false;
-                }
-
-
-            }
+            var borrowBookList=_dbcontext.Borrowing.Where(x=>x.Member.Id== member.Id).Include(x=>x.Book).ToList();
+            if (borrowBookList.Count == 0)
+                return View(new List<Borrowing>());
+            return View(borrowBookList);
         }
+        [HttpPost]  
+        public IActionResult ReturnBook(int Id)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            Member member = _dbcontext.Memebers.Where(x => x.Name == username).First();
+            var borrow = _dbcontext.Borrowing.Where(x => x.Id == Id).First();
+            if(borrow!=null)
+            {
+               decimal fine= borrow.CalculateFine(DateTime.Now,member);
+                borrow.updateBorrowStatus(DateTime.Now);
+                try
+                {
+                    _dbcontext.Borrowing.Update(borrow);
+                    _dbcontext.Add(new ReturnBook(borrow, DateTime.Now, member.Id, fine));
+                    _dbcontext.SaveChanges();
+                    ViewBag.ReturnMsg = "Your book is returned";
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                   
+                }
+            }
+
+            return RedirectToAction("BorrowBooks");
+
+        }
+
+
+            public void checkMemeberBorrowStatus(int Id)
+            {
+                Book book = _dbcontext.Books.Find(Id);
+                var username = HttpContext.Session.GetString("Username");
+                Member member = _dbcontext.Memebers.Where(x => x.Name == username).First();
+                if (book != null && member != null)
+                {
+                    Borrowing borrow = new Borrowing();
+
+                    var memberBorrowList = _dbcontext.Borrowing.Where(x => x.Member.Id == member.Id).ToList();
+                    var memberReturnList = _dbcontext.ReturnBooks.Where(x => x.MemberId == member.Id).ToList();
+                    bool bookAvailabityStatus = book.getBookAvailability();
+                    ViewBag.CanIssue = true;
+
+                    if (!bookAvailabityStatus)
+                    {
+                        ViewBag.AvailabilityMsg = "Sorry Book is not available at the moment...";
+                        ViewBag.CanIssue = false;
+                    }
+                    bool maxLimitStatus = borrow.BorrowingLimitStatus(memberBorrowList, member);
+                    if (!maxLimitStatus)
+                    {
+                        ViewBag.BorrowLimitMsg = "You have reached to your borrow limits";
+                        ViewBag.CanIssue = false;
+                    }
+                    decimal fineStatus = borrow.GetFineStatus(memberBorrowList, memberReturnList,member);
+                    if (fineStatus == -1)
+                    {
+                        ViewBag.UnreturnBooksMsg = "You havent return your borrowed book";
+                        ViewBag.CanIssue = false;
+                    }
+                    if (fineStatus > 0)
+                    {
+                        ViewBag.UnPaidFineMsg = $"You have fine of  {fineStatus} rupees.";
+                        ViewBag.CanIssue = false;
+                    }
+
+
+                }
+            }
 
     }
 }

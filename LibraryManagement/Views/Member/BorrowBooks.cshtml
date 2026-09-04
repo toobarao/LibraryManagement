@@ -1,0 +1,66 @@
+﻿@model List<Borrowing>;
+
+    
+<h1>Borrowed Books</h1>
+@if(!Model.Any())
+{
+    <p>You havent borrow any of the books</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+               
+                <th>Book Title</th>
+                <th>Book Author </th>
+                <th>Borrow Date</th>
+                <th>Promised Return Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var book in Model)
+            {
+                <tr>
+                    <td>@book.Book.Title</td>
+                    <td>@book.Book.Author</td>
+                    <td>@book.BorrowDate</td>
+                    <td>@book.ExpectedReturnDate</td>
+                    
+                    <td>
+                            @switch (book.Status)
+                            {
+                                case BorrowingStatus.Borrowed:
+                                case BorrowingStatus.Overdue:
+                                <a asp-action="ReturnBook"
+                                   asp-route-id="@book.Id"
+                                   class="btn btn-success">
+                                    Return Book
+                                </a>
+                                    break;
+
+                                case BorrowingStatus.ReturnedOnTime:
+                                <span>Already Returned</span>
+                                    break;
+
+                                case BorrowingStatus.ReturnedLate:
+                                <span>Returned Late</span>
+                                    break;
+
+                                default:
+                                <span>Unknown</span>
+                                    break;
+                            }
+                    </td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<script>
+    if (@ViewBag.ReturnMsg!= null) {
+        alert(@ViewBag.ReturnMsg);
+    }
+</script>
