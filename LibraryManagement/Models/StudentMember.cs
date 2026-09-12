@@ -2,7 +2,7 @@
 {
     public class StudentMember : Member
     {
-        public StudentMember(string name, string password, string email) : base(name,password,email) { }
+        public StudentMember(string name, string email) : base(name,email) { }
         public override int borrowLimit()
         {
             return 3;

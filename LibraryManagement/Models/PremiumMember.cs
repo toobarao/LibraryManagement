@@ -2,7 +2,7 @@
 {
     public class PremiumMember:Member
     {
-        public PremiumMember(string name, string password, string email) : base(name, password, email) { }
+        public PremiumMember(string name, string email) : base(name, email) { }
         public override int borrowLimit()
         {
             return 7;

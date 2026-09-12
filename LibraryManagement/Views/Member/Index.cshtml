@@ -1,40 +1,106 @@
-﻿@model List<Book>;
-<h1>List Of Books</h1>
-<table>
-    <thead>
-        <tr>
-            <th>
-                Id
-            </th>
-            <th>Title</th>
-            <th>Author </th>
-            <th>Availability</th>
-            <th>Action</th>
+﻿@using LibraryManagement.Utility
+@model PaginatedList<BookViewModel>;
+@{
+    Layout = "_Layout";
+}
+<div class="row">
+    <div class="col-3">
+        <form asp-action="Index">
+            <h2 class="mx-3">Filters</h2>
+            <div class="m-3">
+                <label for="author">Author:</label>
+                <input class="form-control" type="text" name="searchAuthor" value="@ViewData["Author"]" />
+            </div>
+            <div class="m-3">
+                <label for="author">Availability:</label>
+                <div class="d-flex gap-3">
+                    <label for="author">
+                        <input class="form-check-input" type="radio" name="availability" value="true" />
+                        Yes
+                    </label>
+                    <label for="author">
+                        <input class="form-check-input" type="radio" name="availability" value="false" />
+                        No
+                    </label>
+                </div>
+            </div>
+            <div class="m-3 d-flex gap-3">
+                <button class="btn  btn-primary" type="submit">Filter</button>
+                <button class="btn  btn-primary" type="submit">Reset</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-9">
+        <h1>List Of Books</h1>
+        <form asp-action="Index">
+            <div class="my-3">
+                <label for="title">Search:</label>
+                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+            </div>
+        </form>
+        <table class="table  table-sm table-striped ">
+            <thead>
+                <tr>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                            @Html.DisplayNameFor(model => model[0].Title)
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["AuthorSortParm"]"
+                           asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                            @Html.DisplayNameFor(model => model[0].Author)
+                        </a>
+                    </th>
 
-        </tr>
+                    <th>Availability</th>
+                    <th colspan=2>Action</th>
 
-    </thead>
-    <tbody>
-        @foreach (var book in Model)
-        {
-            <tr>
-                <td>@book.Id</td>
-                <td>@book.Title</td>
-                <td>@book.Author</td>
-                <td>@book.Availability</td>
-                <td>
-                    @Html.ActionLink("Issue Book","IssueBook","Member",new{Id=book.Id})
-                 
-                    </td>
+                </tr>
 
-            </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => book.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => book.Author)
+                        </td>
+
+                        <td>@book.Availability</td>
+                        <td >
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-primary text-nowrap issue" asp-action="IssueBook" id="@book.Id">Issue Book</button>
+                                <button class="btn btn-primary text-nowrap reserve" asp-action="ReserveBook" data-id="@book.Id">Reserve Book</button>
+                            </div>
+                           
+                            @* @Html.ActionLink("Issue Book","IssueBook","Member",new{Id=book.Id}) *@
+
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
         }
-    </tbody>
-</table>
+
+        <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @prevDisabled">
+            Previous
+        </a>
+        <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]" class="btn btn-default @nextDisabled">
+            Next
+        </a>
+    </div>
+</div>
 
 
-<script>
-    if (@ViewBag.Msg != null) { 
-    alert(@ViewBag.Msg)
-    }
-</script>
+<script src="~/js/Member/index.js"></script>

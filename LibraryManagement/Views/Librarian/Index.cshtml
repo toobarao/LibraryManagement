@@ -1,33 +1,73 @@
 ﻿@model List<Book>;
-<h1>List Of Books</h1>
-    <table>
-        <thead>
-            <tr>
-            <th>
-                Id
-            </th>
-            <th>Title</th>
-            <th>Author </th>
-            <th>Availability</th>
-            <th>Action</th>
-            </tr>
-            
-        </thead>
-   <tbody>
-        @foreach(var book in Model)
-        {
-            <tr>
-                <td>@book.Id</td>
-                <td>@book.Title</td>
-                <td>@book.Author</td>
-                <td>@book.Availability</td>
-                <td>@Html.ActionLink("Remove", "RemoveBook","Librarian",book.Id)</td>
+@{
+    Layout = "_Layout";
+}
+<div class="row d-flex">
+    <div class="col-3">
+        <div class="ms-3">
+            <form asp-action="Index">
+                <h2 class="mx-3">Filters</h2>
 
-            </tr>
-        }
-    </tbody>
-</table>
-<div class="flex">
+
+                <div class="m-3">
+                    <label for="author">Author:</label>
+                    <input class="form-control" type="text" name="searchAuthor"  />
+                </div>
+                <div class="m-3">
+                    <label for="author">Availability:</label>
+                    <div class="d-flex gap-3">
+                        <label for="author">
+                            <input class="form-check-input" type="radio" name="availability" value="true" />
+                            Yes
+                        </label>
+                        <label for="author">
+                            <input class="form-check-input" type="radio" name="availability" value="false" />
+                            No
+                        </label>
+                    </div>
+                </div>
+                <div class="m-3 d-flex gap-3">
+                    <button class="btn  btn-primary" type="submit">Filter</button>
+                    <button class="btn  btn-primary" type="submit">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-9 m-auto">
+
+        <h1>List Of Books</h1>
+        <table class="table  table-sm table-striped ">
+            <thead>
+                <tr>
+                    <th>
+                        Id
+                    </th>
+                    <th>Title</th>
+                    <th>Author </th>
+                    <th>Availability</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.Id</td>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.Availability</td>
+                        <td>@Html.ActionLink("Remove", "RemoveBook", "Librarian", book.Id)</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@* <div class="flex">
     <h2>Add a book</h2>
     <form action="~/Librarian/AddBook" method="post">
         <div>
@@ -46,4 +86,4 @@
   
    
 
-</div>
+</div> *@

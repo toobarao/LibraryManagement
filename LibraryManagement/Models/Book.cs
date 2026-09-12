@@ -5,12 +5,12 @@
         public int Id { get; set; }
         public string Title { get; set; }
         public string Author { get; set; }
-        public string CategoryType { get; set; }
+        public string Publisher { get; set; }
         public string ISBN { get; set; }
 
         public string PublicationYear { get; set; }
 
-        public string Availability { get; set; }
+        public  string Availability { get; set; } = "Yes";
         public Book(string title, string author, string availability)
         {
             

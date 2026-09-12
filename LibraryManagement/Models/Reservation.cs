@@ -14,6 +14,7 @@
         {
             this.book = book;
             this.member = member;
+            this.ResevationDate = DateTime.Now;
         }
 
     }

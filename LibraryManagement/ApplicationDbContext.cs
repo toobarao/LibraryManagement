@@ -16,9 +16,15 @@ namespace LibraryManagement
         public DbSet<Librarian> Librarian { get; set; }
         public DbSet<ReturnBook> ReturnBooks { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+       
+        public DbSet<BorrowStatus> BorrowStatus { get; set; }
+        public DbSet<RequestStatus> RequestStatus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Book>()
+           .Property(x => x.Availability)
+           .HasDefaultValue("Yes");
             modelBuilder.Entity<StudentMember>();
             modelBuilder.Entity<PremiumMember>();
         }

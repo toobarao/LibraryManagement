@@ -1,0 +1,56 @@
+﻿@model List<Borrowing>;
+@{
+    Layout = "_Layout";
+}
+
+    <div class="row">
+        <div class="col-8 m-auto">
+            <h2>Borrow Requests</h2>
+        <table class="table  table-sm table-striped ">
+            <thead>
+                <tr>
+                    <th>Book Id</th>
+                    <th>Book Name</th>
+                    <th>Member Id</th>
+                    <th>Member Name</th>
+                    <th>Expected Reurn Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var borrow in Model)
+                {
+                    <tr>
+                        <td>@borrow.Book.Id</td>
+                        <td>@borrow.Book.Title</td>
+                        <td>@borrow.Member.Id</td>
+                        <td>@borrow.Member.Name</td>
+                        <td>@borrow.ExpectedReturnDate</td>
+                        <td>
+                            
+                            <div class="d-flex gap-3 ">
+                                @Html.ActionLink("Accept", "UpdateBorrowRequest", "Librarian", new { borrowId = borrow.Id, requestStatus = 1 })
+                                @Html.ActionLink("Reject", "UpdateBorrowRequest", "Librarian", new { borrowId = borrow.Id, requestStatus = 2 })
+                           
+                            </div>
+                          
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        </div>
+    </div>
+    <script>
+    // document.querySelector("borrow-request").forEach(function(element){
+    //     element.addEventListener("click",function(event){
+    //     let borrowId=element.getAttribute("data-borrow-id");
+    //     let requestStatus=element.getAttribute("data-accept-status");
+
+    //        $.ajax()
+    //     });
+
+    // });
+    </script>

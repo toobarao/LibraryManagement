@@ -11,10 +11,10 @@
         public decimal Fine {  get; set; } = 0;
         public ReturnBook() { }
 
-        public ReturnBook(Borrowing borrow, DateTime returnDate,int memberId,decimal fine)
+        public ReturnBook(Borrowing borrow,int memberId,decimal fine)
         {
             this.Borrowing = borrow;
-            this.ReturnDate = returnDate;
+            this.ReturnDate =DateTime.Now;
             this.MemberId = memberId;
             this.Fine = fine;
         }

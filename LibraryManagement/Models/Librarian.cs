@@ -1,19 +1,24 @@
-﻿namespace LibraryManagement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LibraryManagement.Models
 {
     public class Librarian
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
-
+        [Required]
         public string Password { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public Librarian( string name,string password)
-        {
-           
+        public Librarian(string name,string email) {
             this.Name = name;
-            this.Password = password;   
-        }
+            this.Email = email;
 
+        }
+        
         public void AddBook(Book book)
         {
 

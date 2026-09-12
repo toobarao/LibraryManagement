@@ -1,40 +1,115 @@
 ﻿using LibraryManagement.Models;
+using LibraryManagement.Services;
+using LibraryManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers
 {
-    public class LibrarianController : Controller
+    public class LibrarianController(ILibrarianService librarianService) : Controller
     {
-        private readonly ApplicationDbContext _dbcontext;
-        public LibrarianController(ApplicationDbContext dbcontext)
-        {
-            _dbcontext = dbcontext;
 
+        public IActionResult Dashboard()
+        {
+            return View();
         }
         public IActionResult Index()
         {
-            var books = _dbcontext.Books.ToList();
+            try
+            {
+            var books = librarianService.GetBooks();
             return View(books);
-            
+            }
+            catch (Exception ex)
+            {
+                ErrorModel model = new();
+                model.MakeErrorModel(ex);
+                return RedirectToAction("Error", "Account", model);
+            }
+
         }
         [HttpPost]
         public IActionResult AddBook(Book book)
         {
-            book.Availability = "Yes";
-            _dbcontext.Books.Add(book);
-            _dbcontext.SaveChanges();
-            return View();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    librarianService.AddBook(book);
+                }
+                return RedirectToAction("Index");
+                
+            }
+            catch (Exception ex)
+            {
+                ErrorModel model = new();
+                model.MakeErrorModel(ex);
+                return RedirectToAction("Error", "Account", model);
+            }
         }
         [HttpPost]
         public IActionResult RemoveBook(int Id)
         {
+            try
+            {
 
-            Book book = _dbcontext.Books.Find(Id);
-            _dbcontext.Books.Remove(book);
-            _dbcontext.SaveChanges();
-            var books = _dbcontext.Books.ToList();
-            return View("Index",books);
+                librarianService.RemoveBook(Id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ErrorModel model = new();
+                model.MakeErrorModel(ex);
+                return RedirectToAction("Error", "Account", model);
+            }
         }
+
+        public IActionResult BorrowRequest()
+        {
+            try
+            {
+                var borrowList=librarianService.GetBorrowingsRequest();
+            return View(borrowList);
+            }
+            catch (Exception ex)
+            {
+                ErrorModel model = new();
+                model.MakeErrorModel(ex);
+                return RedirectToAction("Error", "Account", model);
+            }
+        }
+      
+        public IActionResult UpdateBorrowRequest(int borrowId,int requestStatus)
+        {
+            try
+            {
+                librarianService.UpdateBorrowRequest(borrowId, requestStatus);
+
+                return RedirectToAction("BorrowRequest");
+            }
+            catch (Exception ex)
+            {
+                ErrorModel model = new();
+                model.MakeErrorModel(ex);
+                return RedirectToAction("Error", "Account", model);
+            }
+        }
+
+        public IActionResult GetBorrowBooks()
+        {
+            return View();
+        }
+
+       
+        public IActionResult GetReservations()
+        {
+            return View();
+        }
+
+        public IActionResult GetReturnedBooks()
+        {
+            return View();
+        }
+
 
     }
 }

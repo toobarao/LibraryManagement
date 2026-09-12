@@ -10,17 +10,19 @@ namespace LibraryManagement.Models
         public Book Book { get; set; }
         public Member Member { get; set; }
 
-        public DateTime BorrowDate { get; set; }
+        public DateTime? BorrowDate { get; set; }
 
-        public BorrowingStatus Status { get; set; }
+        public int BorrowStatus { get; set; }
+
+        public int RequestStatus { get; set; }
         public Borrowing() { }
 
-        public  Borrowing(Book book,Member member,DateTime returnDate)
+        public Borrowing(Book book, Member member, DateTime returnDate)
         {
             this.Book = book;
             this.Member = member;
-            this.BorrowDate=DateTime.Now;
-            this.ExpectedReturnDate=returnDate;
+            this.ExpectedReturnDate = returnDate;
+            this.RequestStatus = 3;
         }
 
         public void UpdateBookStatus(Book book)
@@ -31,16 +33,16 @@ namespace LibraryManagement.Models
                 book.Availability = "Yes";
 
         }
-        public bool BorrowingLimitStatus(List<Borrowing> borrowList,Member member)
+        public bool BorrowingLimitStatus(List<Borrowing> borrowList, Member member)
         {
             var booksBorrowed = borrowList.Count();
-            
+
             if (booksBorrowed < member.borrowLimit())
                 return true;
             return false;
 
         }
-        public decimal GetFineStatus(List<Borrowing> borrowList,List<ReturnBook> returnList,Member member)
+        public decimal GetFineStatus(List<Borrowing> borrowList, List<ReturnBook> returnList, Member member)
         {
             int fineValue = member.FineValue();
             decimal fine = 0;
@@ -50,10 +52,10 @@ namespace LibraryManagement.Models
             {
                 foreach (var borrowItem in borrowList)
                 {
-                    var borrowId=borrowItem.Id;
-                    var expectedReturnDate=borrowItem.ExpectedReturnDate;
-                    int lateDays= (DateTime.Now - expectedReturnDate).Days;
-                    if (lateDays>0 && returnList.Count()>0)
+                    var borrowId = borrowItem.Id;
+                    var expectedReturnDate = borrowItem.ExpectedReturnDate;
+                    int lateDays = (DateTime.Now - expectedReturnDate).Days;
+                    if (lateDays > 0 && returnList.Count() > 0)
                     {
                         var bookReturn = returnList.Where(x => x.Borrowing.Id == borrowId).First();
                         if (bookReturn != null)
@@ -67,7 +69,7 @@ namespace LibraryManagement.Models
                         else
                             return -1;
                     }
-                    else if(lateDays <= 0 && returnList.Count() == 0)
+                    else if (lateDays <= 0 && returnList.Count() == 0)
                     {
                         return 0;
                     }
@@ -78,43 +80,48 @@ namespace LibraryManagement.Models
 
 
                 }
-              
+
 
 
                 return fine;
             }
-           
+
 
         }
 
-        public decimal CalculateFine(DateTime returnDate, Member member)
+        public decimal CalculateFine(Member member)
         {
             int fineValue = member.FineValue();
-            int days=(returnDate-this.ExpectedReturnDate).Days;
-            if(days>0)
+            int days = (DateTime.Now - this.ExpectedReturnDate).Days;
+            if (days > 0)
             {
-                return days*fineValue;
+                return days * fineValue;
             }
             return 0;
         }
 
-        public void updateBorrowStatus(DateTime returnDate)
+        public void updateBorrowStatus()
         {
-            int days = (returnDate - this.ExpectedReturnDate).Days;
-            if (days>0)
-                this.Status = BorrowingStatus.ReturnedLate;
+            int days = (DateTime.Now - this.ExpectedReturnDate).Days;
+            if (days > 0)
+                this.BorrowStatus= 2;
             else
-                this.Status= BorrowingStatus.ReturnedOnTime;
+                this.BorrowStatus= 3;
 
 
         }
     }
-
-    public enum BorrowingStatus
+    public class BorrowStatus 
     {
-        Borrowed,
-        ReturnedOnTime,
-        ReturnedLate,
-        Overdue
+        public int Id { get; set; } 
+        
+        public string Status { get; set; }
     }
+    public class RequestStatus
+    {
+        public int Id { get; set; }
+        public string Status { get; set; }
+    }
+
+  
 }

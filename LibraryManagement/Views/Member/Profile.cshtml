@@ -1,0 +1,80 @@
+﻿@model ProfileViewModel;
+@{
+    Layout = "_Layout";
+}
+<div class="row">
+    <div class="col-4 m-auto">
+    <h2>Profile Page</h2>
+    <form asp-action="Profile" asp-controller="Member" method="post">
+        <div class="m-3">
+            <label asp-for="Name"></label>
+            <input class="form-control" asp-for="Name" readonly value="@Model.Name"/>
+            <span asp-validation-for="Name"></span>
+        </div>
+
+       
+        <div class="m-3">
+            <label asp-for="Email"></label>
+            <input class="form-control"  asp-for="Email" type="email" readonly value="@Model.Email" />
+            <span asp-validation-for="Email"></span>
+        </div>
+
+      
+        <div class="m-3">
+            <label asp-for="Phone"></label>
+            <input class="form-control"  asp-for="Phone" type="text" readonly value="@Model.Phone" />
+            <span asp-validation-for="Phone"></span>
+        </div>
+
+        <a asp-action="updatePassword" asp-controller="Member">Update Password?</a>
+
+        <div class="m-3 d-flex gap-3">
+        <button type="button"  class="btn btn-primary" id="edit-button">Edit</button>
+         <button type="submit" hidden class="btn btn-primary" id="update-button">Save</button>
+        <button type="button"  class="btn btn-primary" hidden id="cancel-button">Cancel</button>
+            </div>
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="text-danger">@ViewBag.ErrorMessage</div>
+        }
+
+    </form>
+  
+    <div asp-validation-summary="ModelOnly"></div>
+</div>
+<script>
+    var editButton = document.getElementById("edit-button");
+    var cancelButton = document.getElementById("cancel-button");
+    var updateButton = document.getElementById("update-button");
+
+    editButton.addEventListener("click", function () {
+        var inputs = document.querySelectorAll("input[readonly]");
+        inputs.forEach(function (input) {
+            input.removeAttribute("readonly");
+        });
+        
+        //editButton.setAttribute("type", "submit");
+        cancelButton.hidden = false;
+        updateButton.hidden = false;
+         editButton.hidden = true;
+
+    });
+    cancelButton.addEventListener("click", function () {
+        var inputs = document.querySelectorAll("input");
+        var originalValues = {
+            Name: "@Model.Name",
+            Email: "@Model.Email",
+            Phone: "@Model.Phone"
+        };
+        inputs.forEach(function (input) {
+            var name = input.getAttribute("name");
+            if (originalValues.hasOwnProperty(name)) {
+                input.value = originalValues[name];
+            }
+            input.setAttribute("readonly", "readonly");
+
+        });
+        editButton.setAttribute("type", "button");
+        cancelButton.hidden = true;
+    });
+</script>

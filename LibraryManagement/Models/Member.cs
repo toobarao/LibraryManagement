@@ -1,21 +1,22 @@
-﻿namespace LibraryManagement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LibraryManagement.Models
 {
     public abstract class Member
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        [Required]
         public string Password { get; set; }
-
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public string? Phone { get; set; }
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
-
-        protected Member( string name,string password,string email)
+        protected Member(string name, string email)
         {
-         
             this.Name = name;
-            this.Password = password;
-            this.Email= email;  
+            this.Email = email;
         }
 
         public abstract int borrowLimit();

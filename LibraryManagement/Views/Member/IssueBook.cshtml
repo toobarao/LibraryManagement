@@ -1,5 +1,8 @@
-﻿@model Book;
-
+﻿@model IssueBookViewModel;
+@{
+    Layout = "_Layout";
+}
+<div class="container">
 <h1>Issue Book</h1>
 
 @{
@@ -24,22 +27,37 @@
 
 <form method="post" action="~/Member/IssueBook">
     <input type="text" hidden  name ="Id" value="@Model.Id"/>
-<div>
+<div class="m-3">
     <label>Book Title:</label>
-    <input type="text" readonly value="@Model.Title" />
+        <input class="form-control" type="text" name="Title" readonly value="@Model.Title" />
+        
 </div>
-<div>
+<div class="m-3">
     <label>Book Author:</label>
-    <input type="text" readonly value="@Model.Author" />
+        <input class="form-control"  type="text" name="Author" readonly value="@Model.Author" />
 </div>
 
-<div>
+<div class="m-3">
     <label>Return Date:</label>
-        <input type="date" name="returnDate" />
+            <input class="form-control" type="date" name="ExpectedReturnDate"  min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                   max="@DateTime.Now.AddDays(30).ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="ExpectedReturnDate"></span>
 </div>
+<div class="d-flex m-3 gap-3">
+  
+        <button type="button" id="back" class="btn btn-primary">Back</button>
+       
+   
     @if (ViewBag.CanIssue == true)
     {
-        <button type="submit">Issue Book</button>
+            <button type="submit" class="btn btn-primary">Issue Book</button>
     }
-
+        </div>
 </form>
+    <div asp-validation-summary="ModelOnly"></div>
+</div>
+
+<script>
+    document.getElementById('back').addEventListener('click', function () {
+        window.location.href = '/Member/Index';
+    });

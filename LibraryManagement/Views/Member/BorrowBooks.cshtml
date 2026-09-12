@@ -1,5 +1,7 @@
 ﻿@model List<Borrowing>;
-
+@{
+    Layout = "_Layout";
+}
     
 <h1>Borrowed Books</h1>
 @if(!Model.Any())
@@ -25,42 +27,18 @@ else
                 <tr>
                     <td>@book.Book.Title</td>
                     <td>@book.Book.Author</td>
-                    <td>@book.BorrowDate</td>
+                    <td>@(book.BorrowDate==null?"-":@book.BorrowDate)</td>
                     <td>@book.ExpectedReturnDate</td>
-                    
                     <td>
-                            @switch (book.Status)
-                            {
-                                case BorrowingStatus.Borrowed:
-                                case BorrowingStatus.Overdue:
-                                <a asp-action="ReturnBook"
-                                   asp-route-id="@book.Id"
-                                   class="btn btn-success">
-                                    Return Book
-                                </a>
-                                    break;
-
-                                case BorrowingStatus.ReturnedOnTime:
-                                <span>Already Returned</span>
-                                    break;
-
-                                case BorrowingStatus.ReturnedLate:
-                                <span>Returned Late</span>
-                                    break;
-
-                                default:
-                                <span>Unknown</span>
-                                    break;
-                            }
+                        <form asp-action="ReturnBook" asp-controller="Member">
+                            <input name="Id" value="@book.Id" hidden/>
+                        <button class="btn btn-primary">Return</button>
+                        </form>
                     </td>
+                    
                    
                 </tr>
             }
         </tbody>
     </table>
 }
-<script>
-    if (@ViewBag.ReturnMsg!= null) {
-        alert(@ViewBag.ReturnMsg);
-    }
-</script>
